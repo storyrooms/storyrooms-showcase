@@ -1,21 +1,243 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
 <head>
-    <title>StoryRooms</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-        h1 { color: #0076bc; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StoryRooms - Transform Data into Living 3D Experiences</title>
+    <meta name="description" content="Professional 3D storytelling platform. Create immersive data experiences without coding.">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>🏛️ StoryRooms</h1>
-    <h2>Transform Data into Living 3D Experiences</h2>
-    <p>Portfolio and showcase coming soon!</p>
-    <p>Created by Henrik Söderholm</p>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>StoryRooms</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#showcase">Showcase</a></li>
+                <li><a href="#templates">Templates</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact" class="cta-button">Get Started</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Transform Data into Living 3D Experiences</h2>
+            <p class="subtitle">Professional storytelling templates. Build once, share everywhere.</p>
+            <div class="hero-buttons">
+                <a href="#showcase" class="btn btn-primary">View Showcase</a>
+                <a href="#templates" class="btn btn-secondary">Browse Templates</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <!-- Placeholder for 3D preview or animation -->
+            <div class="preview-box">
+                <p>🏛️ 3D Preview Coming Soon</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <h3>Why StoryRooms?</h3>
+        <div class="features-grid">
+            <div class="feature">
+                <span class="icon">📸</span>
+                <h4>Ready-to-Use Templates</h4>
+                <p>Professional designs that work out of the box. Just add your content.</p>
+            </div>
+            <div class="feature">
+                <span class="icon">🎨</span>
+                <h4>Fully Customizable</h4>
+                <p>Adapt to your brand, style, and message.</p>
+            </div>
+            <div class="feature">
+                <span class="icon">🌐</span>
+                <h4>Share Anywhere</h4>
+                <p>Export to HTML, video, or images. Works on any device.</p>
+            </div>
+            <div class="feature">
+                <span class="icon">💼</span>
+                <h4>Commercial Ready</h4>
+                <p>Licensed for business use. No attribution required.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section id="showcase" class="showcase">
+        <h3>Showcase</h3>
+        <p class="section-subtitle">See what's possible with StoryRooms</p>
+        
+        <div class="showcase-grid">
+            <!-- Showcase Item 1: Gothenburg Rooms -->
+            <div class="showcase-item">
+                <div class="showcase-image">
+                    <img src="stories/goteborg-rooms/thumbnail.jpg" alt="Gothenburg Demographics" />
+                </div>
+                <div class="showcase-info">
+                    <h4>Gothenburg Through Data</h4>
+                    <p>Demographic story told through 3D rooms</p>
+                    <a href="stories/goteborg-rooms/index.html" class="btn btn-small">View Story →</a>
+                </div>
+            </div>
+
+            <!-- Placeholder for more showcases -->
+            <div class="showcase-item coming-soon">
+                <div class="showcase-image">
+                    <div class="placeholder">Demo Presentation<br/>Coming Week 2</div>
+                </div>
+                <div class="showcase-info">
+                    <h4>Business Presentation</h4>
+                    <p>3D corridor presentation demo</p>
+                    <span class="badge">Coming Soon</span>
+                </div>
+            </div>
+
+            <div class="showcase-item coming-soon">
+                <div class="showcase-image">
+                    <div class="placeholder">Quiz Demo<br/>Coming Week 3</div>
+                </div>
+                <div class="showcase-info">
+                    <h4>Sweden History Quiz</h4>
+                    <p>Interactive quiz labyrinth</p>
+                    <span class="badge">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Templates Section -->
+    <section id="templates" class="templates">
+        <h3>Available Templates</h3>
+        <p class="section-subtitle">Professional designs ready for your content</p>
+        
+        <div class="templates-grid">
+            <!-- Template 1: Presentation -->
+            <div class="template-card featured">
+                <span class="badge priority">Week 1-2</span>
+                <h4>Presentation Slideshow</h4>
+                <p>Transform slides into immersive 3D corridor experiences</p>
+                <ul class="template-features">
+                    <li>✅ Images & videos</li>
+                    <li>✅ Auto-advance</li>
+                    <li>✅ Chapter navigation</li>
+                    <li>✅ HTML export</li>
+                </ul>
+                <div class="template-price">
+                    <span class="price">990 SEK</span>
+                    <a href="#" class="btn btn-primary">Coming Week 2</a>
+                </div>
+            </div>
+
+            <!-- Template 2: Quiz -->
+            <div class="template-card">
+                <span class="badge">Week 3</span>
+                <h4>Quiz Labyrinth</h4>
+                <p>Gamified learning as an interactive 3D maze</p>
+                <ul class="template-features">
+                    <li>Questions as rooms</li>
+                    <li>Right/wrong paths</li>
+                    <li>Score system</li>
+                    <li>Shareable results</li>
+                </ul>
+                <div class="template-price">
+                    <span class="price">1490 SEK</span>
+                    <a href="#" class="btn btn-secondary">Waitlist</a>
+                </div>
+            </div>
+
+            <!-- Template 3: Timeline -->
+            <div class="template-card">
+                <span class="badge">Month 2</span>
+                <h4>Timeline Corridor</h4>
+                <p>Show change over time through connected spaces</p>
+                <ul class="template-features">
+                    <li>Chronological rooms</li>
+                    <li>Before/after views</li>
+                    <li>Historical milestones</li>
+                    <li>Company timelines</li>
+                </ul>
+                <div class="template-price">
+                    <span class="price">1490 SEK</span>
+                    <a href="#" class="btn btn-secondary">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <h3>About StoryRooms</h3>
+        <div class="about-content">
+            <div class="about-text">
+                <p><strong>Created by Henrik Söderholm</strong> - statistician, data storyteller, and 3D visualization enthusiast.</p>
+                <p>StoryRooms transforms the way we experience data. Instead of static slides or flat reports, create immersive 3D spaces that people can explore.</p>
+                <p>Built on R and rayrender, productified for everyone.</p>
+                <p><strong>Vision:</strong> Make professional 3D storytelling accessible without coding.</p>
+            </div>
+            <div class="about-links">
+                <h4>Connect</h4>
+                <ul>
+                    <li>📧 <a href="mailto:henrik@storyrooms.se">henrik@storyrooms.se</a></li>
+                    <li>💼 <a href="https://linkedin.com/in/yourprofile">LinkedIn</a></li>
+                    <li>🐙 <a href="https://github.com/storyrooms">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact/CTA Section -->
+    <section id="contact" class="contact">
+        <div class="contact-content">
+            <h3>Ready to Get Started?</h3>
+            <p>Launch your first StoryRooms experience this week.</p>
+            <div class="cta-buttons">
+                <a href="mailto:henrik@storyrooms.se" class="btn btn-primary">Contact Me</a>
+                <a href="https://github.com/storyrooms/storyrooms-templates" class="btn btn-secondary">View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="#templates">Templates</a></li>
+                        <li><a href="#showcase">Showcase</a></li>
+                        <li><a href="https://github.com/storyrooms/storyrooms-engine">Engine</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h5>Resources</h5>
+                    <ul>
+                        <li><a href="learn/getting-started.html">Getting Started</a></li>
+                        <li><a href="https://github.com/storyrooms/storyrooms-templates">Documentation</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="#">License</a></li>
+                        <li><a href="#">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 StoryRooms by Henrik Söderholm. MIT License.</p>
+                <p>Week 1 of 30-day launch 🚀</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
 </body>
 </html>
