@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>StoryRooms Presentation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Open Sans", Arial, sans-serif;
+      color: white;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    /* Welcome Screen - Mobile Optimized */
+    #welcome-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0076bc, #005a94);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      transition: opacity 0.8s ease;
+      padding: 20px;
+    }
+
+    #welcome-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #welcome-title {
+      font-size: clamp(28px, 8vw, 52px);
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    #welcome-subtitle {
+      font-size: clamp(16px, 4vw, 24px);
+      opacity: 0.9;
+      margin-bottom: 30px;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    #welcome-meta {
+      font-size: clamp(14px, 3.5vw, 18px);
+      opacity: 0.8;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    #start-button {
+      font-size: clamp(18px, 4vw, 22px);
+      padding: 18px 40px;
+      background: white;
+      color: #0076bc;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 600;
+      min-height: 56px;
+      min-width: 200px;
+      touch-action: manipulation;
+    }
+
+    #start-button:active {
+      transform: scale(0.95);
+    }
+
+    /* Main Container */
+    #presentation-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      touch-action: pan-y;
+    }
+
+    .slide-image, .slide-video {
+      max-width: 95vw;
+      max-height: 85vh;
+      width: auto;
+      height: auto;
+      cursor: pointer;
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      object-fit: contain;
+      touch-action: manipulation;
+    }
+
+    .slide-image.active, .slide-video.active {
+      opacity: 1;
+      z-index: 10;
+    }
+
+    /* Text Overlay - Mobile Optimized */
+    #text-overlay {
+      position: fixed;
+      bottom: clamp(100px, 15vh, 140px);
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      max-width: 90vw;
+      padding: 0 15px;
+    }
+
+    #text-overlay.show {
+      opacity: 1;
+    }
+
+    #slide-title {
+      font-size: clamp(20px, 5vw, 36px);
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-shadow: 0 3px 15px rgba(0, 0, 0, 0.9);
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    #slide-subtitle {
+      font-size: clamp(14px, 3.5vw, 20px);
+      opacity: 0.9;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+      color: #ddd;
+      line-height: 1.4;
+    }
+
+    /* Progress Bar */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, #0076bc, #00a8e8);
+      transition: width 0.5s ease;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0, 118, 188, 0.6);
+    }
+
+    /* Controls - Mobile Optimized */
+    #controls {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      padding: 12px 20px;
+      border-radius: 50px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 40px rgba(0, 118, 188, 0.4);
+      border: 1px solid rgba(0, 118, 188, 0.4);
+      z-index: 1000;
+      max-width: 95vw;
+      flex-wrap: nowrap;
+    }
+
+    button {
+      background: linear-gradient(135deg, #0076bc, #005a94);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: clamp(14px, 3vw, 16px);
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 15px rgba(0, 118, 188, 0.3);
+      white-space: nowrap;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 10px rgba(0, 118, 188, 0.5);
+    }
+
+    button:disabled {
+      background: #333;
+      cursor: not-allowed;
+      opacity: 0.4;
+      box-shadow: none;
+    }
+
+    #slide-counter {
+      color: white;
+      font-size: clamp(14px, 3.5vw, 20px);
+      font-weight: 600;
+      min-width: 80px;
+      text-align: center;
+      background: rgba(0, 118, 188, 0.25);
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 118, 188, 0.3);
+      white-space: nowrap;
+    }
+
+    /* Branding */
+    #branding {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: clamp(16px, 3.5vw, 20px);
+      font-weight: 700;
+      color: #0076bc;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0.8;
+    }
+
+    /* Keyboard Hints - Hidden on Mobile */
+    #keyboard-hints {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #ccc;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      display: none;
+    }
+
+    #keyboard-hints kbd {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      margin: 0 3px;
+      font-size: 12px;
+    }
+
+    /* Swipe Indicator */
+    #swipe-indicator {
+      position: fixed;
+      bottom: 50%;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 25px;
+      border-radius: 30px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 500;
+      backdrop-filter: blur(10px);
+    }
+
+    #swipe-indicator.show {
+      opacity: 1;
+    }
+
+    /* Mobile-specific adjustments */
+    @media (max-width: 768px) {
+      #controls {
+        padding: 10px 15px;
+        gap: 10px;
+      }
+
+      button {
+        padding: 10px 16px;
+        font-size: 14px;
+      }
+
+      #slide-counter {
+        min-width: 70px;
+        padding: 6px 10px;
+        font-size: 14px;
+      }
+
+      .slide-image, .slide-video {
+        max-height: 80vh;
+      }
+
+      #text-overlay {
+        bottom: 90px;
+      }
+    }
+
+    /* Desktop - Show keyboard hints */
+    @media (min-width: 769px) {
+      #keyboard-hints {
+        display: block;
+      }
+
+      button:hover:not(:disabled) {
+        background: linear-gradient(135deg, #005a94, #004070);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 118, 188, 0.6);
+      }
+
+      #start-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      .slide-image:hover, .slide-video:hover {
+        transform: scale(1.005);
+      }
+    }
+
+    /* Landscape mobile adjustments */
+    @media (max-height: 500px) and (orientation: landscape) {
+      #text-overlay {
+        bottom: 70px;
+      }
+
+      #slide-title {
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+
+      #slide-subtitle {
+        font-size: 14px;
+      }
+
+      #controls {
+        padding: 8px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Screen -->
+  <div id="welcome-screen">
+    <div id="welcome-title"></div>
+    <div id="welcome-subtitle"></div>
+    <div id="welcome-meta"></div>
+    <button id="start-button">Starta presentation</button>
+  </div>
+
+  <!-- Progress Bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Branding -->
+  <div id="branding">StoryRooms</div>
+
+  <!-- Swipe Indicator -->
+  <div id="swipe-indicator">👈 Swipe</div>
+
+  <!-- Presentation Container -->
+  <div id="presentation-container"></div>
+
+  <!-- Text Overlay -->
+  <div id="text-overlay">
+    <div id="slide-title"></div>
+    <div id="slide-subtitle"></div>
+  </div>
+
+  <!-- Controls -->
+  <div id="controls">
+    <button id="prev-btn">←</button>
+    <div id="slide-counter"></div>
+    <button id="next-btn">→</button>
+    <button id="reset-btn">⟲</button>
+  </div>
+
+  <!-- Keyboard Hints (desktop only) -->
+  <div id="keyboard-hints">
+    <kbd>←</kbd> <kbd>→</kbd> <kbd>Space</kbd>
+  </div>
+
+  <script>
+        const config = {
+      title: "Mobil Test",
+      subtitle: "Optimerad för alla enheter",
+      author: "Henrik Söderholm",
+      duration: 3,
+
+      slides: [
+{
+      file: "RUM_0.png",
+      title: "Välkommen",
+      subtitle: "Swipe för att fortsätta"
+    },
+{
+      file: "RUM_1.png",
+      title: "Kapitel 1",
+      subtitle: "En berättelse"
+    },
+{
+      file: "RUM_2.png",
+      title: "Kapitel 2",
+      subtitle: "Fortsättningen"
+    },
+{
+      file: "sphere_popup.mp4",
+      title: "Animering",
+      subtitle: "Se hur det rör sig"
+    },
+{
+      file: "RUM_9.png",
+      title: "Avslut",
+      subtitle: "Tack för att du tittade!"
+    }
+      ]
+    };
+
+    let currentSlide = 0;
+    let totalSlides = config.slides.length;
+
+    // Touch handling
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
+    const swipeThreshold = 50;
+
+    // Elements
+    const welcomeScreen = document.getElementById("welcome-screen");
+    const welcomeTitle = document.getElementById("welcome-title");
+    const welcomeSubtitle = document.getElementById("welcome-subtitle");
+    const welcomeMeta = document.getElementById("welcome-meta");
+    const startButton = document.getElementById("start-button");
+    const container = document.getElementById("presentation-container");
+    const textOverlay = document.getElementById("text-overlay");
+    const slideTitle = document.getElementById("slide-title");
+    const slideSubtitle = document.getElementById("slide-subtitle");
+    const progressBar = document.getElementById("progress-bar");
+    const slideCounter = document.getElementById("slide-counter");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const swipeIndicator = document.getElementById("swipe-indicator");
+
+    // Initialize
+    function init() {
+      welcomeTitle.textContent = config.title;
+      welcomeSubtitle.textContent = config.subtitle;
+      welcomeMeta.textContent = `${totalSlides} slides • ~${config.duration} min`;
+      if (config.author) welcomeMeta.textContent += ` • ${config.author}`;
+
+      config.slides.forEach((slide, index) => {
+        const isVideo = slide.file.match(/\.(mp4|webm|mov)$/i);
+        if (isVideo) {
+          const video = document.createElement("video");
+          video.className = "slide-video";
+          video.id = `slide-${index}`;
+          video.src = slide.file;
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
+          video.muted = true;
+          if (slide.loop) video.loop = true;
+          if (slide.autoAdvance !== false) {
+            video.addEventListener("ended", () => setTimeout(nextSlide, 500));
+          }
+          video.addEventListener("click", nextSlide);
+          container.appendChild(video);
+        } else {
+          const img = document.createElement("img");
+          img.className = "slide-image";
+          img.id = `slide-${index}`;
+          img.src = slide.file;
+          img.alt = slide.title || `Slide ${index + 1}`;
+          img.addEventListener("click", nextSlide);
+          container.appendChild(img);
+        }
+      });
+
+      // Preload
+      config.slides.forEach(slide => {
+        if (!slide.file.match(/\.(mp4|webm|mov)$/i)) {
+          const img = new Image();
+          img.src = slide.file;
+        }
+      });
+
+      setupTouchHandlers();
+    }
+
+    // Touch handlers
+    function setupTouchHandlers() {
+      const touchArea = document.body;
+
+      touchArea.addEventListener("touchstart", handleTouchStart, { passive: true });
+      touchArea.addEventListener("touchend", handleTouchEnd, { passive: true });
+    }
+
+    function handleTouchStart(e) {
+      if (welcomeScreen.classList.contains("hidden")) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }
+    }
+
+    function handleTouchEnd(e) {
+      if (welcomeScreen.classList.contains("hidden")) {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+      }
+    }
+
+    function handleSwipe() {
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = Math.abs(touchEndY - touchStartY);
+
+      // Only swipe if horizontal movement is dominant
+      if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > deltaY) {
+        if (deltaX > 0) {
+          // Swipe right - previous
+          showSwipeIndicator("👉");
+          prevSlide();
+        } else {
+          // Swipe left - next
+          showSwipeIndicator("👈");
+          nextSlide();
+        }
+      }
+    }
+
+    function showSwipeIndicator(emoji) {
+      swipeIndicator.textContent = emoji;
+      swipeIndicator.classList.add("show");
+      setTimeout(() => {
+        swipeIndicator.classList.remove("show");
+      }, 300);
+    }
+
+    // Update slide
+    function updateSlide() {
+      document.querySelectorAll(".slide-image, .slide-video").forEach(el => {
+        el.classList.remove("active");
+        if (el.tagName === "VIDEO") {
+          el.pause();
+          el.currentTime = 0;
+        }
+      });
+
+      const currentElement = document.getElementById(`slide-${currentSlide}`);
+      if (currentElement) {
+        currentElement.classList.add("active");
+        if (currentElement.tagName === "VIDEO") {
+          currentElement.play().catch(err => console.log("Video autoplay:", err));
+        }
+      }
+
+      const slide = config.slides[currentSlide];
+      slideTitle.textContent = slide.title || "";
+      slideSubtitle.textContent = slide.subtitle || "";
+
+      if (slide.title || slide.subtitle) {
+        textOverlay.classList.add("show");
+      } else {
+        textOverlay.classList.remove("show");
+      }
+
+      slideCounter.textContent = `${currentSlide + 1}/${totalSlides}`;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+
+      const progress = ((currentSlide + 1) / totalSlides) * 100;
+      progressBar.style.width = progress + "%";
+    }
+
+    // Navigation
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function resetPresentation() {
+      currentSlide = 0;
+      updateSlide();
+      welcomeScreen.classList.remove("hidden");
+    }
+
+    // Event listeners
+    startButton.addEventListener("click", () => {
+      welcomeScreen.classList.add("hidden");
+      setTimeout(updateSlide, 500);
+    });
+
+    prevBtn.addEventListener("click", prevSlide);
+    nextBtn.addEventListener("click", nextSlide);
+    resetBtn.addEventListener("click", resetPresentation);
+
+    // Keyboard (desktop)
+    document.addEventListener("keydown", (e) => {
+      if (!welcomeScreen.classList.contains("hidden")) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          startButton.click();
+        }
+      } else {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prevSlide();
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          resetPresentation();
+        } else if (e.key === "End") {
+          e.preventDefault();
+          currentSlide = totalSlides - 1;
+          updateSlide();
+        }
+      }
+    });
+
+    // Prevent zoom on double-tap
+    let lastTouchEnd = 0;
+    document.addEventListener("touchend", (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    // Initialize
+    init();
+  </script>
+</body>
+</html>
