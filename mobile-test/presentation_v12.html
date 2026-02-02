@@ -619,14 +619,14 @@
     // Touch handlers
     function setupTouchHandlers() {
       document.body.addEventListener("touchstart", (e) => {
-        if (!welcomeScreen.classList.contains("hidden") && !infoPanel.classList.contains("open")) {
+        if (welcomeScreen.classList.contains("hidden") && !infoPanel.classList.contains("open")) {
           touchStartX = e.changedTouches[0].screenX;
           touchStartY = e.changedTouches[0].screenY;
         }
       }, { passive: true });
 
       document.body.addEventListener("touchend", (e) => {
-        if (!welcomeScreen.classList.contains("hidden") && !infoPanel.classList.contains("open")) {
+        if (welcomeScreen.classList.contains("hidden") && !infoPanel.classList.contains("open")) {
           touchEndX = e.changedTouches[0].screenX;
           touchEndY = e.changedTouches[0].screenY;
           handleSwipe();
