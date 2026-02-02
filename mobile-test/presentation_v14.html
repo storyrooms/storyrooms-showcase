@@ -461,6 +461,89 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
+    /* Share Panel Elements */
+    #share-panel h3 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      text-align: center;
+      color: white;
+    }
+
+    #share-url {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      font-size: 14px;
+      margin: 15px 0;
+      font-family: monospace;
+      outline: none;
+    }
+
+    #copy-button {
+      width: 100%;
+      padding: 16px;
+      background: white;
+      color: #0076bc;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 25px;
+      touch-action: manipulation;
+      transition: all 0.3s ease;
+    }
+
+    #copy-button:active {
+      transform: scale(0.98);
+    }
+
+    #qr-code {
+      text-align: center;
+      margin: 20px 0 0 0;
+    }
+
+    #qr-code canvas {
+      border-radius: 12px;
+      background: white;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Close Buttons - Smaller and More Discrete */
+    #info-close, #share-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 20px;
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all 0.3s ease;
+    }
+
+    #info-close:hover, #share-close:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    #info-close:active, #share-close:active {
+      transform: scale(0.9);
+    }
+
     /* Branding */
     #branding {
       position: fixed;
@@ -571,6 +654,24 @@
         top: 12px;
       }
 
+      #info-close, #share-close {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+        top: 12px;
+        right: 12px;
+      }
+
+      #share-panel {
+        padding: 25px 20px;
+        max-width: 95vw;
+      }
+
+      #share-panel h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
       #branding {
         font-size: 10px;
         bottom: 15px;
@@ -641,10 +742,10 @@
   <!-- Share Panel -->
   <div id="share-panel">
     <button id="share-close">✕</button>
-    <h3>📤 Dela presentation</h3>
-    <input type="text" id="share-url" readonly style="width:100%; padding:12px; border-radius:10px; border:2px solid rgba(255,255,255,0.3); background:rgba(0,0,0,0.3); color:white; font-size:14px; margin:15px 0; font-family:monospace;">
-    <button id="copy-button" style="width:100%; padding:15px; background:white; color:#0076bc; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; margin-bottom:20px;">📋 Kopiera länk</button>
-    <div id="qr-code" style="text-align:center; margin:20px 0;"></div>
+    <h3>Dela</h3>
+    <input type="text" id="share-url" readonly>
+    <button id="copy-button">Kopiera länk</button>
+    <div id="qr-code"></div>
   </div>
 
   <!-- Controls -->
