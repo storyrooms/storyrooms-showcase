@@ -318,8 +318,9 @@
       background: rgba(0, 118, 188, 0.8);
       border: 2px solid rgba(255, 255, 255, 0.3);
       color: white;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: 600;
+      font-style: normal;
       display: none;
       align-items: center;
       justify-content: center;
@@ -335,7 +336,7 @@
 
     #share-button {
       left: 15px;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     #info-button.show, #share-button.show {
@@ -441,6 +442,17 @@
       opacity: 1;
       pointer-events: all;
       transform: translateY(0);
+    }
+
+    #info-content {
+      font-size: clamp(14px, 3.5vw, 16px);
+      line-height: 1.6;
+      color: #eee;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      padding-right: 40px;
+      max-width: 100%;
     }
 
     #share-panel {
@@ -729,7 +741,7 @@
     <div id="text-area">
       <div id="slide-title"></div>
       <div id="slide-subtitle"></div>
-      <button id="info-button">ℹ️</button>
+      <button id="info-button">i</button>
     </div>
   </div>
 
