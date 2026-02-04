@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>Göteborgs Befolkning</title>
+  <meta name="description" content="Interaktiv presentation med zoom transitions och Ken Burns effekter">
+  <meta name="author" content="Henrik Söderholm">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Göteborgs Befolkning">
+  <meta property="og:description" content="Interaktiv presentation med zoom transitions och Ken Burns effekter">
+
+  <meta property="og:url" content="https://storyrooms.github.io/gbg-befolkning">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Göteborgs Befolkning">
+  <meta name="twitter:description" content="Interaktiv presentation med zoom transitions och Ken Burns effekter">
+
+
+  <meta name="generator" content="StoryRooms v1.7">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+    /* BASE STYLES - från v1.6, oförändrade */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+    }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* WELCOME SCREEN - från v1.6 */
+    #welcome-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3000;
+      transition: opacity 1s ease;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #welcome-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    #hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.1);
+    }
+
+    #welcome-screen.hero-full #hero-background {
+      animation: kenBurnsWelcome 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes kenBurnsWelcome {
+      0% { transform: scale(1.1) translateX(0); }
+      100% { transform: scale(1.15) translateX(-2%); }
+    }
+
+    #hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(3px);
+    }
+
+    #welcome-screen.hero-full #hero-overlay {
+      background: linear-gradient(
+        135deg,
+        rgba(0, 118, 188, 0.85) 0%,
+        rgba(0, 90, 148, 0.90) 50%,
+        rgba(0, 60, 110, 0.95) 100%
+      );
+    }
+
+    #welcome-screen.hero-cinematic #hero-overlay {
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.2) 0%,
+        rgba(0, 0, 0, 0.6) 100%
+      );
+      backdrop-filter: blur(1px);
+    }
+
+    @media (max-width: 768px) {
+      #welcome-screen.hero-cinematic #hero-overlay {
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.4) 0%,
+          rgba(0, 0, 0, 0.8) 100%
+        );
+      }
+    }
+
+    #welcome-screen.hero-cinematic #hero-background {
+      animation: none;
+      transform: scale(1.05);
+      transition: transform 0.5s ease;
+    }
+
+    #welcome-screen.hero-cinematic:hover #hero-background {
+      transform: scale(1.08);
+    }
+
+    #hero-content {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    #welcome-screen.hero-cinematic.layout-asymmetric #hero-content {
+      align-items: flex-start;
+      justify-content: center;
+      padding-left: 60px;
+      max-width: 65%;
+    }
+
+    @media (max-width: 768px) {
+      #welcome-screen.hero-cinematic.layout-asymmetric #hero-content {
+        align-items: center;
+        padding-left: 20px;
+        max-width: 100%;
+      }
+    }
+
+    /* TYPOGRAPHY - från v1.6 */
+    #welcome-title {
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      line-height: 1.1;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease 0.3s forwards;
+    }
+
+    #welcome-screen.hero-full #welcome-title {
+      font-size: clamp(32px, 10vw, 72px);
+      text-align: center;
+    }
+
+    #welcome-screen.hero-cinematic #welcome-title {
+      font-size: clamp(48px, 12vw, 96px);
+      text-align: left;
+      letter-spacing: -0.02em;
+      line-height: 0.95;
+    }
+
+    @media (max-width: 768px) {
+      #welcome-screen.hero-cinematic #welcome-title {
+        text-align: center;
+      }
+    }
+
+    #welcome-subtitle {
+      font-weight: 300;
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      margin-bottom: 40px;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease 0.6s forwards;
+    }
+
+    #welcome-screen.hero-full #welcome-subtitle {
+      font-size: clamp(18px, 5vw, 32px);
+      text-align: center;
+    }
+
+    #welcome-screen.hero-cinematic #welcome-subtitle {
+      font-size: clamp(20px, 4vw, 28px);
+      text-align: left;
+      max-width: 600px;
+    }
+
+    @media (max-width: 768px) {
+      #welcome-screen.hero-cinematic #welcome-subtitle {
+        text-align: center;
+      }
+    }
+
+    #welcome-tagline {
+      font-size: clamp(14px, 3vw, 18px);
+      opacity: 0;
+      margin-bottom: 40px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease 0.8s forwards;
+    }
+
+    #welcome-screen.hero-full #welcome-tagline {
+      text-align: center;
+    }
+
+    #welcome-screen.hero-cinematic #welcome-tagline {
+      text-align: left;
+    }
+
+    @media (max-width: 768px) {
+      #welcome-screen.hero-cinematic #welcome-tagline {
+        text-align: center;
+      }
+    }
+
+    #welcome-tagline::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 3px;
+      background: var(--accent-color, #FF6B35);
+      margin-right: 15px;
+      vertical-align: middle;
+    }
+
+    #welcome-meta {
+      font-size: clamp(14px, 3.5vw, 20px);
+      opacity: 0;
+      margin-bottom: 40px;
+      text-align: center;
+      font-weight: 400;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease 0.9s forwards;
+    }
+
+    #start-button {
+      font-size: clamp(18px, 4vw, 24px);
+      padding: 20px 50px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 700;
+      min-height: 60px;
+      touch-action: manipulation;
+      opacity: 0;
+      transform: translateY(30px) scale(0.9);
+      animation: fadeInUpScale 1s ease 1.2s forwards;
+    }
+
+    #welcome-screen.hero-full #start-button {
+      background: white;
+      color: #0076bc;
+    }
+
+    #welcome-screen.hero-cinematic #start-button {
+      background: var(--accent-color, #FF6B35);
+      color: white;
+    }
+
+    #start-button:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    #start-button:active {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUpScale {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* MAIN CONTENT - från v1.6 */
+    #main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: 35px;
+      padding-bottom: 90px;
+    }
+
+    #media-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 0;
+      padding: 10px;
+      perspective: 1000px;
+    }
+
+    .slide-image, .slide-video {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      cursor: pointer;
+      position: absolute;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      object-fit: contain;
+      touch-action: manipulation;
+    }
+
+    .slide-image.active, .slide-video.active {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 10;
+    }
+
+    .slide-image.ken-burns {
+      animation: kenBurns 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes kenBurns {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.08) translate(-2%, -1%); }
+    }
+
+    .slide-image.active.ken-burns {
+      transform: scale(1);
+      animation: kenBurns 15s ease-in-out infinite alternate;
+    }
+
+    .transition-zoom .slide-image:not(.active),
+    .transition-zoom .slide-video:not(.active) {
+      transform: scale(1.2);
+    }
+
+    #text-area {
+      flex-shrink: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), #000);
+      padding: 20px 20px;
+      min-height: 120px;
+      max-height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-top: 2px solid rgba(0, 118, 188, 0.3);
+      gap: 8px;
+    }
+
+    #slide-title {
+      font-size: clamp(20px, 4.5vw, 32px);
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+    }
+
+    #slide-title.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #slide-subtitle {
+      font-size: clamp(15px, 3.5vw, 20px);
+      opacity: 0;
+      color: #ddd;
+      text-align: center;
+      line-height: 1.4;
+      width: 100%;
+      transform: translateY(10px);
+      transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
+    }
+
+    #slide-subtitle.show {
+      opacity: 0.9;
+      transform: translateY(0);
+    }
+
+    /* UI ELEMENTS */
+    body:has(#welcome-screen:not(.hidden)) #info-button,
+    body:has(#welcome-screen:not(.hidden)) #share-button,
+    body:has(#welcome-screen:not(.hidden)) #controls,
+    body:has(#welcome-screen:not(.hidden)) #progress-bar,
+    body:has(#welcome-screen:not(.hidden)) #keyboard-hints,
+    body:has(#welcome-screen:not(.hidden)) #branding {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    #info-button, #share-button {
+      position: absolute;
+      top: 15px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 118, 188, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      font-style: normal;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      touch-action: manipulation;
+      z-index: 200;
+    }
+
+    #info-button {
+      right: 15px;
+    }
+
+    #share-button {
+      left: 15px;
+      font-size: 16px;
+    }
+
+    #info-button.show, #share-button.show {
+      display: flex;
+    }
+
+    #info-button:active, #share-button:active {
+      transform: scale(0.9);
+      background: rgba(0, 118, 188, 1);
+    }
+
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, #0076bc, #00a8e8);
+      transition: width 0.5s ease;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0, 118, 188, 0.6);
+    }
+
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      padding: 10px 18px;
+      border-radius: 50px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 40px rgba(0, 118, 188, 0.4);
+      border: 1px solid rgba(0, 118, 188, 0.4);
+      z-index: 1000;
+    }
+
+    button {
+      background: linear-gradient(135deg, #0076bc, #005a94);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: clamp(14px, 3vw, 16px);
+      font-weight: 600;
+      transition: all 0.3s ease;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      background: #333;
+      opacity: 0.4;
+    }
+
+    #slide-counter {
+      color: white;
+      font-size: clamp(13px, 3vw, 18px);
+      font-weight: 600;
+      min-width: 70px;
+      text-align: center;
+      background: rgba(0, 118, 188, 0.25);
+      padding: 8px 12px;
+      border-radius: 20px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════ */
+    /* v1.7 NEW: ENHANCED INFO PANEL */
+    /* ═══════════════════════════════════════════════════════════════════ */
+
+    #info-panel {
+      position: fixed;
+      z-index: 2500;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+      border-top: 2px solid rgba(0, 118, 188, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.95));
+      backdrop-filter: blur(20px);
+      padding: 25px 20px 90px 20px;
+      transform: translateY(100%);
+      max-height: 70vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #info-panel.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    /* v1.7: Scroll indicator */
+    #info-panel::after {
+      content: "↓ mer";
+      position: sticky;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-block;
+      padding: 6px 20px;
+      background: rgba(0, 118, 188, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #info-panel.has-scroll::after {
+      opacity: 1;
+    }
+
+    /* Custom scrollbar */
+    #info-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #info-panel::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    #info-panel::-webkit-scrollbar-thumb {
+      background: rgba(0, 118, 188, 0.5);
+      border-radius: 10px;
+    }
+
+    #info-panel::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 118, 188, 0.7);
+    }
+
+    #info-content {
+      font-size: clamp(15px, 3.5vw, 17px);
+      line-height: 1.7;
+      color: #eee;
+      max-width: 100%;
+      padding-right: 10px;
+    }
+
+    /* v1.7: Markdown styling */
+    #info-content strong {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    #info-content em {
+      color: #ccc;
+      font-style: italic;
+    }
+
+    #info-content br {
+      margin-bottom: 0.5em;
+    }
+
+    /* v1.7: Links section */
+    #info-links {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      font-size: clamp(14px, 3vw, 16px);
+    }
+
+    .info-link-icon {
+      font-size: 18px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .info-link-label {
+      color: #aaa;
+      font-weight: 500;
+    }
+
+    .info-link-url {
+      color: rgba(0, 168, 232, 1);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      word-break: break-all;
+    }
+
+    .info-link-url:hover {
+      color: rgba(100, 200, 255, 1);
+      text-decoration: underline;
+    }
+
+    .info-link-url:active {
+      color: rgba(0, 118, 188, 1);
+    }
+
+    #share-panel {
+      position: fixed;
+      z-index: 2500;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: linear-gradient(135deg, rgba(0, 118, 188, 0.95), rgba(0, 90, 148, 0.95));
+      backdrop-filter: blur(20px);
+      padding: 30px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #share-panel.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    #share-panel h3 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      text-align: center;
+      color: white;
+    }
+
+    #share-url {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      font-size: 14px;
+      margin: 15px 0;
+      font-family: monospace;
+      outline: none;
+    }
+
+    #copy-button {
+      width: 100%;
+      padding: 16px;
+      background: white;
+      color: #0076bc;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 25px;
+      touch-action: manipulation;
+      transition: all 0.3s ease;
+    }
+
+    #copy-button:active {
+      transform: scale(0.98);
+    }
+
+    #qr-code {
+      text-align: center;
+      margin: 20px 0 0 0;
+    }
+
+    #qr-code canvas {
+      border-radius: 12px;
+      background: white;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    #info-close, #share-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 20px;
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all 0.3s ease;
+    }
+
+    #info-close:hover, #share-close:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    #info-close:active, #share-close:active {
+      transform: scale(0.9);
+    }
+
+    #branding {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    #branding a {
+      color: rgba(0, 118, 188, 0.8);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    #branding a:hover {
+      color: rgba(0, 168, 232, 1);
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 118, 188, 0.95);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 3000;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    #toast.show {
+      opacity: 1;
+    }
+
+    #swipe-indicator {
+      position: fixed;
+      bottom: 50%;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 12px 20px;
+      border-radius: 25px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 500;
+      pointer-events: none;
+    }
+
+    #swipe-indicator.show {
+      opacity: 1;
+    }
+
+    #keyboard-hints {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #ccc;
+      backdrop-filter: blur(10px);
+      z-index: 999;
+      display: none;
+    }
+
+    #keyboard-hints kbd {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    @media (max-width: 768px) {
+      #welcome-title {
+        font-size: clamp(28px, 8vw, 48px);
+      }
+
+      #text-area {
+        padding: 18px 15px;
+        min-height: 100px;
+        max-height: 160px;
+      }
+
+      #info-button, #share-button {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+        top: 12px;
+      }
+
+      #info-close, #share-close {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+        top: 12px;
+        right: 12px;
+      }
+
+      #share-panel {
+        padding: 25px 20px;
+        max-width: 95vw;
+      }
+
+      #share-panel h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      #branding {
+        font-size: 10px;
+        bottom: 15px;
+        right: 15px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      #keyboard-hints {
+        display: block;
+      }
+
+      button:hover:not(:disabled) {
+        background: linear-gradient(135deg, #005a94, #004070);
+        transform: translateY(-2px);
+      }
+
+      #info-button:hover, #share-button:hover {
+        background: rgba(0, 118, 188, 1);
+        transform: scale(1.05);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="welcome-screen" class="hero-full">
+    <img id="hero-background" src="" alt="">
+    <div id="hero-overlay"></div>
+    <div id="hero-content">
+      <div id="welcome-title"></div>
+      <div id="welcome-subtitle"></div>
+      <div id="welcome-tagline"></div>
+      <div id="welcome-meta"></div>
+      <button id="start-button">Starta presentation</button>
+    </div>
+  </div>
+
+  <div id="progress-bar"></div>
+  <button id="share-button">🔗</button>
+  <div id="swipe-indicator">👈</div>
+  <div id="toast">Länk kopierad!</div>
+
+  <div id="main-content">
+    <div id="media-container" class="transition-zoom"></div>
+    <div id="text-area">
+      <div id="slide-title"></div>
+      <div id="slide-subtitle"></div>
+      <button id="info-button">i</button>
+    </div>
+  </div>
+
+  <div id="info-panel">
+    <button id="info-close">✕</button>
+    <div id="info-content"></div>
+    <div id="info-links"></div>
+  </div>
+
+  <div id="share-panel">
+    <button id="share-close">✕</button>
+    <h3>Dela</h3>
+    <input type="text" id="share-url" readonly>
+    <button id="copy-button">Kopiera länk</button>
+    <div id="qr-code"></div>
+  </div>
+
+  <div id="controls">
+    <button id="prev-btn">←</button>
+    <div id="slide-counter"></div>
+    <button id="next-btn">→</button>
+    <button id="reset-btn">⟲</button>
+  </div>
+
+  <div id="keyboard-hints">
+    <kbd>←</kbd> <kbd>→</kbd> <kbd>i</kbd> <kbd>s</kbd>
+  </div>
+
+  <div id="branding">
+    Made with <a href="https://github.com/storyrooms" target="_blank">StoryRooms</a>
+  </div>
+
+  <script>
+    const config = {
+      title: "Göteborgs Befolkning",
+      subtitle: "En visuell resa genom 30 år av statistik",
+      author: "Henrik Söderholm",
+      description: "Interaktiv presentation med zoom transitions och Ken Burns effekter",
+      thumbnail: "",
+      heroImage: "GlobalFunLearning_winter.png",
+      url: "https://storyrooms.github.io/gbg-befolkning",
+      duration: 3,
+      enableSharing: true,
+      enableKenBurns: true,
+      transitionStyle: "zoom",
+
+      heroStyle: "cinematic",
+      heroLayout: "asymmetric",
+      heroAccentColor: "#0076bc",
+      heroTagline: "Data • Storytelling • 1990–2024",
+      ctaText: "Utforska resan",
+      showHeroMeta: false,
+
+      slides: [
+{
+      file: "RUM_0.png",
+      title: "Välkommen",
+      subtitle: "En resa",
+      info: "Detta är en presentation om Göteborgs <strong>befolkningsutveckling</strong>. Vi kommer titta på data från <em>1990 till 2024</em>."
+    },
+{
+      file: "RUM_1.png",
+      title: "Befolkning 1990-2024",
+      subtitle: "Historisk data",
+      info: "Enligt <strong>SCB</strong> har Göteborgs befolkning ökat från 433,000 (1990) till 580,000 (2024). Detta motsvarar en ökning på <em>34%</em> över 34 år.",
+      infoLinks: "<div class=\"info-link\">\n  <span class=\"info-link-icon\">📄</span>\n  <span class=\"info-link-label\">Källa:</span>\n  <a href=\"https://scb.se/hitta-statistik/statistik-efter-amne/befolkning/\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">scb.se/hitta-statistik/statistik-efter-amne/befolkning</a>\n</div>\n<div class=\"info-link\">\n  <span class=\"info-link-icon\">📖</span>\n  <span class=\"info-link-label\">Läs mer:</span>\n  <a href=\"https://goteborg.se/statistik\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">goteborg.se/statistik</a>\n</div>"
+    },
+{
+      file: "RUM_2.png",
+      title: "Åldersstruktur",
+      subtitle: "Demografi",
+      info: "Den stora förändringen är att andelen <em>äldre</em> ökar medan andelen <em>barn</em> minskar relativt sett. Detta påverkar <strong>framtida behov</strong> av äldreomsorg och skolor.",
+      infoLinks: "<div class=\"info-link\">\n  <span class=\"info-link-icon\">📄</span>\n  <span class=\"info-link-label\">Datakälla:</span>\n  <a href=\"https://scb.se\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">scb.se</a>\n</div>\n<div class=\"info-link\">\n  <span class=\"info-link-icon\">📖</span>\n  <span class=\"info-link-label\">Mer information:</span>\n  <a href=\"https://goteborg.se/valfard\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">goteborg.se/valfard</a>\n</div>"
+    },
+{
+      file: "sphere_popup.mp4",
+      title: "Visualisering",
+      subtitle: "Se hur sfären växer",
+      info: "En <strong>3D-visualisering</strong> som visar befolkningstillväxten i Göteborg. Varje lager representerar <em>ett decennium</em>.",
+      infoLinks: "<div class=\"info-link\">\n  <span class=\"info-link-icon\">▶️</span>\n  <span class=\"info-link-label\">Video:</span>\n  <a href=\"https://vimeo.com/storyrooms\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">vimeo.com/storyrooms</a>\n</div>\n<div class=\"info-link\">\n  <span class=\"info-link-icon\">🗺️</span>\n  <span class=\"info-link-label\">Karta:</span>\n  <a href=\"https://google.com/maps/goteborg\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">google.com/maps/goteborg</a>\n</div>"
+    },
+{
+      file: "RUM_10.png",
+      title: "Tack!",
+      subtitle: "Frågor?",
+      info: "<strong>Kontakta oss</strong> för mer information om <em>demografiska analyser</em> och <em>prognoser</em>.",
+      infoLinks: "<div class=\"info-link\">\n  <span class=\"info-link-icon\">🌐</span>\n  <span class=\"info-link-label\">Hemsida:</span>\n  <a href=\"https://goteborg.se\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">goteborg.se</a>\n</div>\n<div class=\"info-link\">\n  <span class=\"info-link-icon\">✉️</span>\n  <span class=\"info-link-label\">Kontakt:</span>\n  <a href=\"mailto:henrik@gbg.se\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"info-link-url\">mailto:henrik@gbg.se</a>\n</div>"
+    }
+      ]
+    };
+
+    document.documentElement.style.setProperty("--accent-color", config.heroAccentColor);
+
+    const welcomeScreen = document.getElementById("welcome-screen");
+    welcomeScreen.classList.remove("hero-full", "hero-cinematic");
+    welcomeScreen.classList.add(`hero-${config.heroStyle}`);
+
+    if (config.heroLayout === "asymmetric") {
+      welcomeScreen.classList.add("layout-asymmetric");
+    }
+
+    let currentSlide = 0;
+    let totalSlides = config.slides.length;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
+    const swipeThreshold = 50;
+
+    const heroBackground = document.getElementById("hero-background");
+    const welcomeTitle = document.getElementById("welcome-title");
+    const welcomeSubtitle = document.getElementById("welcome-subtitle");
+    const welcomeTagline = document.getElementById("welcome-tagline");
+    const welcomeMeta = document.getElementById("welcome-meta");
+    const startButton = document.getElementById("start-button");
+    const mediaContainer = document.getElementById("media-container");
+    const slideTitle = document.getElementById("slide-title");
+    const slideSubtitle = document.getElementById("slide-subtitle");
+    const infoButton = document.getElementById("info-button");
+    const shareButton = document.getElementById("share-button");
+    const infoPanel = document.getElementById("info-panel");
+    const infoContent = document.getElementById("info-content");
+    const infoLinks = document.getElementById("info-links");
+    const infoClose = document.getElementById("info-close");
+    const sharePanel = document.getElementById("share-panel");
+    const shareUrl = document.getElementById("share-url");
+    const copyButton = document.getElementById("copy-button");
+    const qrCodeDiv = document.getElementById("qr-code");
+    const shareClose = document.getElementById("share-close");
+    const progressBar = document.getElementById("progress-bar");
+    const slideCounter = document.getElementById("slide-counter");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const swipeIndicator = document.getElementById("swipe-indicator");
+    const toast = document.getElementById("toast");
+
+    function init() {
+      welcomeTitle.textContent = config.title;
+      welcomeSubtitle.textContent = config.subtitle;
+
+      if (config.heroTagline && config.heroTagline.length > 0) {
+        welcomeTagline.textContent = config.heroTagline;
+        welcomeTagline.style.display = "block";
+      } else {
+        welcomeTagline.style.display = "none";
+      }
+
+      if (config.showHeroMeta) {
+        welcomeMeta.textContent = `${totalSlides} slides • ~${config.duration} min`;
+        if (config.author) welcomeMeta.textContent += ` • ${config.author}`;
+        welcomeMeta.style.display = "block";
+      } else {
+        welcomeMeta.style.display = "none";
+      }
+
+      startButton.textContent = config.ctaText;
+
+      if (config.heroImage) {
+        heroBackground.src = config.heroImage;
+      }
+
+      if (config.enableSharing && config.url) {
+        shareButton.classList.add("show");
+        shareUrl.value = config.url;
+      }
+
+      if (config.transitionStyle === "zoom") {
+        mediaContainer.classList.add("transition-zoom");
+      }
+
+      config.slides.forEach((slide, index) => {
+        const isVideo = slide.file.match(/\.(mp4|webm|mov)$/i);
+
+        if (isVideo) {
+          const video = document.createElement("video");
+          video.className = "slide-video";
+          video.id = `slide-${index}`;
+          video.src = slide.file;
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
+          video.muted = true;
+          video.addEventListener("click", nextSlide);
+          mediaContainer.appendChild(video);
+        } else {
+          const img = document.createElement("img");
+          img.className = "slide-image";
+          img.id = `slide-${index}`;
+          img.src = slide.file;
+          img.alt = slide.title || `Slide ${index + 1}`;
+
+          if (config.enableKenBurns) {
+            img.classList.add("ken-burns");
+          }
+
+          img.addEventListener("click", nextSlide);
+          mediaContainer.appendChild(img);
+        }
+      });
+
+      config.slides.forEach(slide => {
+        if (!slide.file.match(/\.(mp4|webm|mov)$/i)) {
+          const img = new Image();
+          img.src = slide.file;
+        }
+      });
+
+      setupTouchHandlers();
+    }
+
+    function setupTouchHandlers() {
+      document.body.addEventListener("touchstart", (e) => {
+        if (welcomeScreen.classList.contains("hidden") &&
+            !infoPanel.classList.contains("open") &&
+            !sharePanel.classList.contains("open")) {
+          touchStartX = e.changedTouches[0].screenX;
+          touchStartY = e.changedTouches[0].screenY;
+        }
+      }, { passive: true });
+
+      document.body.addEventListener("touchend", (e) => {
+        if (welcomeScreen.classList.contains("hidden") &&
+            !infoPanel.classList.contains("open") &&
+            !sharePanel.classList.contains("open")) {
+          touchEndX = e.changedTouches[0].screenX;
+          touchEndY = e.changedTouches[0].screenY;
+          handleSwipe();
+        }
+      }, { passive: true });
+    }
+
+    function handleSwipe() {
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = Math.abs(touchEndY - touchStartY);
+
+      if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > deltaY) {
+        if (deltaX > 0) {
+          showSwipeIndicator("👉");
+          prevSlide();
+        } else {
+          showSwipeIndicator("👈");
+          nextSlide();
+        }
+      }
+    }
+
+    function showSwipeIndicator(emoji) {
+      swipeIndicator.textContent = emoji;
+      swipeIndicator.classList.add("show");
+      setTimeout(() => swipeIndicator.classList.remove("show"), 300);
+    }
+
+    function updateSlide() {
+      document.querySelectorAll(".slide-image, .slide-video").forEach(el => {
+        el.classList.remove("active");
+        if (el.tagName === "VIDEO") {
+          el.pause();
+          el.currentTime = 0;
+        }
+      });
+
+      slideTitle.classList.remove("show");
+      slideSubtitle.classList.remove("show");
+
+      setTimeout(() => {
+        const currentElement = document.getElementById(`slide-${currentSlide}`);
+        if (currentElement) {
+          currentElement.classList.add("active");
+          if (currentElement.tagName === "VIDEO") {
+            currentElement.play().catch(() => {});
+          }
+        }
+
+        const slide = config.slides[currentSlide];
+        slideTitle.textContent = slide.title || "";
+        slideSubtitle.textContent = slide.subtitle || "";
+
+        setTimeout(() => {
+          if (slide.title) slideTitle.classList.add("show");
+          if (slide.subtitle) slideSubtitle.classList.add("show");
+        }, 100);
+
+        if (slide.info && slide.info.length > 0) {
+          infoButton.classList.add("show");
+        } else {
+          infoButton.classList.remove("show");
+        }
+      }, 100);
+
+      slideCounter.textContent = `${currentSlide + 1}/${totalSlides}`;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+
+      progressBar.style.width = ((currentSlide + 1) / totalSlides * 100) + "%";
+
+      infoPanel.classList.remove("open");
+      sharePanel.classList.remove("open");
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function resetPresentation() {
+      currentSlide = 0;
+
+      if (config.heroImage) {
+        heroBackground.src = config.heroImage;
+      }
+
+      updateSlide();
+      welcomeScreen.classList.remove("hidden");
+    }
+
+    function toggleInfo() {
+      const slide = config.slides[currentSlide];
+      if (slide.info) {
+        // v1.7: Set info content (already has HTML from markdown parse)
+        infoContent.innerHTML = slide.info;
+
+        // v1.7: Set info links if present
+        if (slide.infoLinks && slide.infoLinks.length > 0) {
+          infoLinks.innerHTML = slide.infoLinks;
+          infoLinks.style.display = "block";
+        } else {
+          infoLinks.style.display = "none";
+        }
+
+        infoPanel.classList.toggle("open");
+
+        if (infoPanel.classList.contains("open")) {
+          sharePanel.classList.remove("open");
+
+          // v1.7: Check if scrollable and add indicator
+          setTimeout(() => {
+            if (infoPanel.scrollHeight > infoPanel.clientHeight) {
+              infoPanel.classList.add("has-scroll");
+            } else {
+              infoPanel.classList.remove("has-scroll");
+            }
+          }, 100);
+        }
+      }
+    }
+
+    function toggleShare() {
+      sharePanel.classList.toggle("open");
+      if (sharePanel.classList.contains("open")) {
+        infoPanel.classList.remove("open");
+        generateQR();
+      }
+    }
+
+    function copyToClipboard() {
+      shareUrl.select();
+      shareUrl.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(shareUrl.value).then(() => {
+        showToast("Länk kopierad!");
+      }).catch(err => {
+        document.execCommand("copy");
+        showToast("Länk kopierad!");
+      });
+    }
+
+    function generateQR() {
+      if (!config.url) return;
+      qrCodeDiv.innerHTML = "";
+      new QRCode(qrCodeDiv, {
+        text: config.url,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
+
+    startButton.addEventListener("click", () => {
+      welcomeScreen.classList.add("hidden");
+      setTimeout(updateSlide, 500);
+    });
+
+    prevBtn.addEventListener("click", prevSlide);
+    nextBtn.addEventListener("click", nextSlide);
+    resetBtn.addEventListener("click", resetPresentation);
+    infoButton.addEventListener("click", toggleInfo);
+    shareButton.addEventListener("click", toggleShare);
+    infoClose.addEventListener("click", () => infoPanel.classList.remove("open"));
+    shareClose.addEventListener("click", () => sharePanel.classList.remove("open"));
+    copyButton.addEventListener("click", copyToClipboard);
+
+    document.addEventListener("keydown", (e) => {
+      if (!welcomeScreen.classList.contains("hidden")) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          startButton.click();
+        }
+      } else {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prevSlide();
+        } else if (e.key === "i" || e.key === "I") {
+          e.preventDefault();
+          toggleInfo();
+        } else if (e.key === "s" || e.key === "S") {
+          e.preventDefault();
+          if (config.enableSharing && config.url) toggleShare();
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          resetPresentation();
+        } else if (e.key === "End") {
+          e.preventDefault();
+          currentSlide = totalSlides - 1;
+          updateSlide();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          infoPanel.classList.remove("open");
+          sharePanel.classList.remove("open");
+        }
+      }
+    });
+
+    let lastTouchEnd = 0;
+    document.addEventListener("touchend", (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    init();
+  </script>
+  </body>
+</html>
